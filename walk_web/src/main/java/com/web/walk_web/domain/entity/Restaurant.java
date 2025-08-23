@@ -24,7 +24,7 @@ public class Restaurant {
     private String category; // 업태명 (한식, 중식, 카페 등)
 
     @Column(name = "road_address")
-    private String roadAddress; // 소재지(도로명)
+    private String roadAddress; // 소재지(지번)
 
     @Builder
     public Restaurant(String name, String category, String roadAddress) {

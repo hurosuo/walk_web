@@ -25,7 +25,7 @@ public class RoadTree {
     private String treeName; // 수목명
 
     @Column(name = "road_address")
-    private String roadAddress; // 도로명주소
+    private String roadAddress; // 지번주소
 
     @Column(name = "latitude", nullable = false)
     private Double latitude; // 수목 위도
@@ -34,7 +34,7 @@ public class RoadTree {
     private Double longitude; // 수목 경도
 
     @Column(name = "dbh")
-    private Integer dbh; // 흉고직경 (Diameter at Breast Height)
+    private Double dbh; // 흉고직경 (Diameter at Breast Height)
 
     @Column(name = "road_start_point")
     private String roadStartPoint; // 도로 시작점
@@ -43,7 +43,7 @@ public class RoadTree {
     private String roadEndPoint; // 도로 종료점
 
     @Builder
-    public RoadTree(String managementNumber, String treeName, String roadAddress, Double latitude, Double longitude, Integer dbh, String roadStartPoint, String roadEndPoint) {
+    public RoadTree(String managementNumber, String treeName, String roadAddress, Double latitude, Double longitude, Double dbh, String roadStartPoint, String roadEndPoint) {
         this.managementNumber = managementNumber;
         this.treeName = treeName;
         this.roadAddress = roadAddress;

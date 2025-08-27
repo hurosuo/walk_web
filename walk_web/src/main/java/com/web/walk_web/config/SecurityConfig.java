@@ -29,7 +29,10 @@ public class SecurityConfig {
     @Bean
     public CorsConfigurationSource corsConfigurationSource() {
         CorsConfiguration config = new CorsConfiguration();
-        config.setAllowedOrigins(List.of("http://localhost:3000"));
+        config.setAllowedOrigins(List.of(
+                "http://52.3.42.186:80",
+                "http://52.3.42.186:8080"
+        ));
         config.setAllowedMethods(List.of("GET", "POST", "PUT", "DELETE", "PATCH", "OPTIONS"));
         config.setAllowedHeaders(List.of("*"));
         config.setAllowCredentials(true);
@@ -50,7 +53,10 @@ public class SecurityConfig {
                 .httpBasic(AbstractHttpConfigurer::disable) // 2. httpBasic 비활성화
 
                 .authorizeHttpRequests(authorize -> authorize
-                        .requestMatchers("/api/users/signup", "/api/users/login").permitAll()
+                        // ✅ CORS preflight 허용
+                        .requestMatchers(org.springframework.http.HttpMethod.OPTIONS, "/**").permitAll()
+
+                        .requestMatchers("/", "/api/users/signup", "/api/users/login").permitAll()
                         .anyRequest().authenticated()
                 )
                 .logout(logout -> logout

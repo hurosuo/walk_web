@@ -22,6 +22,10 @@ jobs:
           distribution: temurin
           java-version: '17'
 
+      # ⬇️ 실행권한 부여 (권한 문제 126 해결)
+      - name: Grant execute permission for gradlew
+        run: chmod +x gradlew
+
       # Gradle로 JAR 생성 (Maven이면 해당 단계만 교체)
       - name: Build JAR
         run: ./gradlew clean bootJar -x test

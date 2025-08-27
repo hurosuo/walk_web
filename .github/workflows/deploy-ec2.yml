@@ -34,7 +34,8 @@ jobs:
       - name: Add SSH key
         uses: webfactory/ssh-agent@v0.9.0
         with:
-          ssh-private-key: ${{ secrets.EC2_SSH_KEY }}
+          ssh-private-key: |
+            ${{ secrets.EC2_SSH_KEY }}
 
       # 호스트 키 등록(처음 접속시 Known hosts 에러 방지)
       - name: Add EC2 to known_hosts

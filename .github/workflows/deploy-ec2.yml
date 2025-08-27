@@ -46,17 +46,25 @@ jobs:
 
       # EC2로 파일 전송: JAR + Dockerfile + compose + deploy.sh
       - name: Copy files to EC2
+        env:
+          EC2_HOST: ${{ secrets.EC2_HOST }}
+          EC2_USER: ${{ secrets.EC2_USER }}
+          EC2_SSH_PORT: ${{ secrets.EC2_SSH_PORT }}
         run: |
-          scp -P "${{ secrets.EC2_SSH_PORT || 22 }}" \
-            ./build/libs/*.jar \
-            ./Dockerfile \
-            ./docker-compose.yml \
-            ./deploy.sh \
-            "${{ secrets.EC2_USER }}@${{ secrets.EC2_HOST }}:~/"
+          PORT="${EC2_SSH_PORT:-22}"
+          JAR=$(ls build/libs/*.jar | head -n1)
+          scp -i ~/.ssh/id_ec2 -P "$PORT" \
+            "$JAR" Dockerfile deploy.sh \
+            "${EC2_USER}@${EC2_HOST}:~/"
+
 
       # EC2에서 원격 배포 실행
       - name: Remote deploy on EC2
+        env:
+          EC2_HOST: ${{ secrets.EC2_HOST }}
+          EC2_USER: ${{ secrets.EC2_USER }}
+          EC2_SSH_PORT: ${{ secrets.EC2_SSH_PORT }}
         run: |
-          ssh -p "${{ secrets.EC2_SSH_PORT || 22 }}" \
-            "${{ secrets.EC2_USER }}@${{ secrets.EC2_HOST }}" \
-            "bash ~/deploy.sh"
+          PORT="${EC2_SSH_PORT:-22}"
+          ssh -i ~/.ssh/id_ec2 -p "$PORT" \
+            "${EC2_USER}@${EC2_HOST}" "bash ~/deploy.sh"

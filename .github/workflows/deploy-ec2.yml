@@ -34,14 +34,14 @@ jobs:
       # ---- 🔐 키 파일 복원 (base64 → pem) + fingerprint 확인 ----
       - name: Write SSH key (from base64)
         env:
-          EC2_SSH_KEY_B64: ${{ secrets.EC2_SSH_KEY_B64 }}
+          EC2_SSH_KEY_B64: ${{ secrets.EC2_SSH_KEY }}
         run: |
           set -e
           umask 077
           mkdir -p ~/.ssh
 
           # 1) 개행/공백 제거 후 디코드 (GNU base64)
-          if printf '%s' "$EC2_SSH_KEY_B64" | tr -d '\r\n ' | base64 -d > ~/.ssh/id_ec2 2>/dev/null; then
+          if printf '%s' "$EC2_SSH_KEY_B64" | tr -d '\r\n ' | base64 -d -A > ~/.ssh/id_ec2 2>/dev/null; then
             :
           else
             # 2) fallback: openssl base64 (개행 무시 -A)

@@ -1,4 +1,5 @@
 name: deploy-to-ec2
+
 on:
   push:
     branches: [ main ]
@@ -30,13 +31,21 @@ jobs:
       - name: Build JAR
         run: ./gradlew clean bootJar -x test
 
-      # ✅ 비밀키를 파일로 저장 (CR 제거 + 권한 600)
-      - name: Write SSH key
+      # ---- 🔐 키 파일 복원 (base64 → pem) + fingerprint 확인 ----
+      - name: Write SSH key (from base64)
+        env:
+          EC2_SSH_KEY_B64: ${{ secrets.EC2_SSH_KEY }}
         run: |
           umask 077
           mkdir -p ~/.ssh
-          echo "${{ secrets.EC2_SSH_KEY }}" | tr -d '\r' > ~/.ssh/id_ec2
+          # base64 디코드
+          echo "$EC2_SSH_KEY_B64" | base64 -d > ~/.ssh/id_ec2
+          # CR 문자 제거(윈도 개행 대비)
+          tr -d '\r' < ~/.ssh/id_ec2 > ~/.ssh/id_ec2.clean && mv ~/.ssh/id_ec2.clean ~/.ssh/id_ec2
           chmod 600 ~/.ssh/id_ec2
+          # 🔎 지문 확인(로그에 안전하게 fingerprint만 출력)
+          echo "Fingerprint of restored key:"
+          ssh-keygen -lf ~/.ssh/id_ec2 || true
 
       # 호스트 키 등록(처음 접속시 Known hosts 에러 방지)
       - name: Add EC2 to known_hosts
@@ -52,7 +61,7 @@ jobs:
           EC2_SSH_PORT: ${{ secrets.EC2_SSH_PORT }}
         run: |
           PORT="${EC2_SSH_PORT:-22}"
-          JAR=$(ls build/libs/*.jar | head -n1)
+          JAR="$(ls build/libs/*.jar | head -n1)"
           scp -i ~/.ssh/id_ec2 -P "$PORT" \
             "$JAR" Dockerfile deploy.sh \
             "${EC2_USER}@${EC2_HOST}:~/"
@@ -67,4 +76,5 @@ jobs:
         run: |
           PORT="${EC2_SSH_PORT:-22}"
           ssh -i ~/.ssh/id_ec2 -p "$PORT" \
-            "${EC2_USER}@${EC2_HOST}" "bash ~/deploy.sh"
+            "${EC2_USER}@${EC2_HOST}" \
+            "bash ~/deploy.sh"

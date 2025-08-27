@@ -56,7 +56,7 @@ public class SecurityConfig {
                         // ✅ CORS preflight 허용
                         .requestMatchers(org.springframework.http.HttpMethod.OPTIONS, "/**").permitAll()
 
-                        .requestMatchers("/", "/walk/users/signup", "/walk/users/login").permitAll()
+                        .requestMatchers("/walk", "/walk/users/signup", "/walk/users/login").permitAll()
                         .anyRequest().authenticated()
                 )
                 .logout(logout -> logout

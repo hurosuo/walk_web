@@ -1,0 +1,88 @@
+name: deploy-to-ec2
+
+on:
+  push:
+    branches: [ main ]
+
+jobs:
+  build-and-deploy:
+    runs-on: ubuntu-latest
+
+    # ⬇️ 모든 run 스텝의 작업 디렉터리를 walk_web 로 고정
+    defaults:
+      run:
+        working-directory: walk_web
+
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Setup Java
+        uses: actions/setup-java@v4
+        with:
+          distribution: temurin
+          java-version: '17'
+
+      # ⬇️ 실행권한 부여 (권한 문제 126 해결)
+      - name: Grant execute permission for gradlew
+        run: chmod +x gradlew
+
+      # Gradle로 JAR 생성 (Maven이면 해당 단계만 교체)
+      - name: Build JAR
+        run: ./gradlew clean bootJar -x test
+
+      # ---- 🔐 키 파일 복원 (base64 → pem) + fingerprint 확인 ----
+      - name: Write SSH key (from base64)
+        env:
+          EC2_SSH_KEY_B64: ${{ secrets.EC2_SSH_KEY }}
+        run: |
+          set -e
+          umask 077
+          mkdir -p ~/.ssh
+
+          # 1) 개행/공백 제거 후 디코드 (GNU base64)
+          if printf '%s' "$EC2_SSH_KEY_B64" | tr -d '\r\n ' | base64 -d -A > ~/.ssh/id_ec2 2>/dev/null; then
+            :
+          else
+            # 2) fallback: openssl base64 (개행 무시 -A)
+            printf '%s' "$EC2_SSH_KEY_B64" | tr -d '\r\n ' | openssl base64 -d -A > ~/.ssh/id_ec2
+          fi
+
+          # 3) 결과 검증
+          test -s ~/.ssh/id_ec2 || { echo "decoded key is empty"; exit 1; }
+          chmod 600 ~/.ssh/id_ec2
+          echo "[debug] fingerprint:"
+          ssh-keygen -lf ~/.ssh/id_ec2
+
+
+      # 호스트 키 등록(처음 접속시 Known hosts 에러 방지)
+      - name: Add EC2 to known_hosts
+        run: |
+          mkdir -p ~/.ssh
+          ssh-keyscan -p "${{ secrets.EC2_SSH_PORT || 22 }}" "${{ secrets.EC2_HOST }}" >> ~/.ssh/known_hosts
+
+      # EC2로 파일 전송: JAR + Dockerfile + compose + deploy.sh
+      - name: Copy files to EC2
+        env:
+          EC2_HOST: ${{ secrets.EC2_HOST }}
+          EC2_USER: ${{ secrets.EC2_USER }}
+          EC2_SSH_PORT: ${{ secrets.EC2_SSH_PORT }}
+        run: |
+          PORT="${EC2_SSH_PORT:-22}"
+          JAR="$(ls build/libs/*.jar | head -n1)"
+          scp -i ~/.ssh/id_ec2 -P "$PORT" \
+            "$JAR" Dockerfile deploy.sh \
+            "${EC2_USER}@${EC2_HOST}:~/"
+
+
+      # EC2에서 원격 배포 실행
+      - name: Remote deploy on EC2
+        env:
+          EC2_HOST: ${{ secrets.EC2_HOST }}
+          EC2_USER: ${{ secrets.EC2_USER }}
+          EC2_SSH_PORT: ${{ secrets.EC2_SSH_PORT }}
+        run: |
+          PORT="${EC2_SSH_PORT:-22}"
+          ssh -i ~/.ssh/id_ec2 -p "$PORT" \
+            "${EC2_USER}@${EC2_HOST}" \
+            "bash ~/deploy.sh"

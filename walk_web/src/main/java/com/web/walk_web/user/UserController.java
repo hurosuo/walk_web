@@ -24,7 +24,6 @@ public class UserController {
     }
 
     @PostMapping("/login")
-
     public ResponseEntity<?> login(@RequestBody UserDto.LoginRequest requestDto, HttpServletRequest request) {
         try {
 // 1. Service에서 로그인 검증

@@ -5,6 +5,7 @@ import lombok.AccessLevel;
 import lombok.Builder;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
+import org.hibernate.annotations.ColumnDefault;
 
 import java.time.LocalDateTime;
 
@@ -47,13 +48,16 @@ public class AiRouteRecommend {
     @Column(name = "route_title", nullable = false)
     private String title; // 산책 제목
 
-    @Column(name = "route_content", nullable = false, length = 2000) // 내용이 길 수 있으므로 length 지정
+    @Column(name = "route_content", nullable = false, length = 2000)
     private String content; // 산책 내용
 
     @Column(name = "ai_summary", nullable = false, length = 1000)
     private String summary; // AI 요약
 
-    @Enumerated(EnumType.STRING) // Enum의 이름을 DB에 문자열로 저장
+    @Column(name = "route_distance_km")
+    private Double distanceInKm; // km 단위의 총 경로 거리
+
+    @Enumerated(EnumType.STRING)
     @Column(name = "route_duration", nullable = false)
     private RouteDuration duration; // 산책 시간
 
@@ -61,8 +65,18 @@ public class AiRouteRecommend {
     @Column(name = "route_purpose", nullable = false)
     private RoutePurpose purpose; // 산책 목적
 
+
+    @Column(name = "address_jibun", nullable = false)
+    private String addressJibun; // 지번 주소
+
+    @Column(name = "with_pet", nullable = false)
+    @ColumnDefault("0") // DB에 DDL 생성 시 default 0 적용
+    private boolean withPet; // 반려동물 동반 가능 여부 (true=1, false=0)
+
+
+
     @Builder
-    public AiRouteRecommend(String title, String content, String summary, RouteDuration duration, RoutePurpose purpose, Double routeStartX, Double routeStartY, LocalDateTime routeStartTime, LocalDateTime routeEndTime) {
+    public AiRouteRecommend(String title, String content, String summary, Double distanceInKm, RouteDuration duration, RoutePurpose purpose, Double routeStartX, Double routeStartY, LocalDateTime routeStartTime, LocalDateTime routeEndTime, String addressJibun, boolean withPet) {
         this.title = title;
         this.content = content;
         this.summary = summary;
@@ -72,5 +86,9 @@ public class AiRouteRecommend {
         this.routeStartY = routeStartY;
         this.routeStartTime = routeStartTime;
         this.routeEndTime = routeEndTime;
+        this.distanceInKm = distanceInKm;
+        this.addressJibun = addressJibun;
+        this.withPet = withPet;
+
     }
 }

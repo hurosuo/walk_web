@@ -30,6 +30,8 @@ public class SecurityConfig {
     public CorsConfigurationSource corsConfigurationSource() {
         CorsConfiguration config = new CorsConfiguration();
         config.setAllowedOrigins(List.of(
+                "http://localhost:5175",
+                "https://walkingcity.vercel.app/",
                 "http://localhost:8080",
                 "http://52.3.42.186:80",
                 "http://52.3.42.186:8080"

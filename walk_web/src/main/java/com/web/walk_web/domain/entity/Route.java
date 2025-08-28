@@ -5,6 +5,8 @@ import lombok.AccessLevel;
 import lombok.Builder;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
+import org.hibernate.annotations.CreationTimestamp;
+import java.time.LocalDateTime;
 
 @Entity
 @Getter
@@ -20,6 +22,10 @@ public class Route {
     @OneToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "ai_response_id", nullable = false)
     private AiRouteRecommend aiRouteRecommend;
+
+    @CreationTimestamp
+    @Column(name = "route_created_at", nullable = false, updatable = false)
+    private LocalDateTime createdAt;
 
     @Builder
     public Route(AiRouteRecommend aiRouteRecommend) {

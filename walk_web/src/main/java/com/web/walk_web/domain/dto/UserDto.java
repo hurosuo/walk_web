@@ -15,7 +15,6 @@ public class UserDto {
         private String nickname;
         private Integer age;
         private User.UserGender gender;
-        private User.WantedEnvironment wantEnv;
         private Boolean isPet;
 
         public User toEntity(String encodedPassword) {
@@ -24,7 +23,6 @@ public class UserDto {
                     .nickname(this.nickname)
                     .age(this.age)
                     .gender(this.gender)
-                    .wantEnv(this.wantEnv)
                     .isPet(this.isPet)
                     .build();
         }
@@ -44,8 +42,6 @@ public class UserDto {
         private final String nickname;
         private final Integer age;
         private final User.UserGender gender;
-        private final User.WantedEnvironment wantEnv;
-        private final Boolean isPet;
 
         // Entity를 DTO로 변환하는 생성자
         public UserResponse(User user) {
@@ -53,8 +49,6 @@ public class UserDto {
             this.nickname = user.getNickname();
             this.age = user.getAge();
             this.gender = user.getGender();
-            this.wantEnv = user.getWantEnv();
-            this.isPet = user.getIsPet();
         }
     }
     @Getter

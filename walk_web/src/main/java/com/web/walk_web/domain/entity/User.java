@@ -19,10 +19,7 @@ public class User {
     public enum UserGender {
         male, female, other
     }
-    // 일단은 원하는 배경은 도시랑 정원만 설정함.
-    public enum WantedEnvironment {
-        CITY, PARK
-    }
+
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY) // MySQL의 AUTO_INCREMENT와 동일
     @Column(name = "user_id")
@@ -45,20 +42,14 @@ public class User {
     @Column(name = "user_created_at", nullable = false, updatable = false)
     private LocalDateTime createdAt;
 
-    @Enumerated(EnumType.STRING)
-    @Column(name = "user_want_env")
-    private WantedEnvironment wantEnv;
 
-    @Column(name = "user_is_pet")
-    private Boolean isPet;
+
 
     @Builder
-    public User(String password, String nickname, Integer age, UserGender gender, WantedEnvironment wantEnv, Boolean isPet) {
+    public User(String password, String nickname, Integer age, UserGender gender, Boolean isPet) {
         this.password = password;
         this.nickname = nickname;
         this.age = age;
         this.gender = gender;
-        this.wantEnv = wantEnv;
-        this.isPet = isPet;
     }
 }

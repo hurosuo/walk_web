@@ -30,10 +30,22 @@ public class MyRoute {
     @JoinColumn(name = "ai_response_id", nullable = false)
     private AiRouteRecommend aiRouteRecommend;
 
+    @Column(name = "my_route_walk_count")
+    private Integer walkCount;
+
+    @Column(name = "my_route_rating")
+    private Integer rating;
+
+    @Column(name = "my_route_favorite", nullable = false)
+    private Boolean isFavorite;
+
     @Builder
     public MyRoute(User user, Route route, AiRouteRecommend aiRouteRecommend) {
         this.user = user;
         this.route = route;
         this.aiRouteRecommend = aiRouteRecommend;
+        this.walkCount = walkCount;
+        this.rating = rating;
+        this.isFavorite = isFavorite;
     }
 }

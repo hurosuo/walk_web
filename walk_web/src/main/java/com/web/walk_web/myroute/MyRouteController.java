@@ -1,8 +1,7 @@
-package com.web.walk_web.user.myroute;
+package com.web.walk_web.myroute;
 
 
 import com.web.walk_web.domain.dto.MyRouteDto;
-import com.web.walk_web.user.myroute.MyRouteService;
 import jakarta.servlet.http.HttpSession;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;

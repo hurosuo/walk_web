@@ -1,8 +1,7 @@
-package com.web.walk_web.user.myroute;
+package com.web.walk_web.myroute;
 
 import com.web.walk_web.domain.entity.MyRoute;
 import com.web.walk_web.domain.dto.MyRouteDto;
-import com.web.walk_web.user.myroute.MyRouteRepository;
 import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.Sort;
 import org.springframework.stereotype.Service;

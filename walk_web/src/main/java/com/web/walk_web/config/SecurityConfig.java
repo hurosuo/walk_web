@@ -48,7 +48,8 @@ public class SecurityConfig {
     @Bean
     public SecurityFilterChain securityFilterChain(HttpSecurity http) throws Exception {
         http
-                .csrf(AbstractHttpConfigurer::disable)
+                //.csrf(AbstractHttpConfigurer::disable)
+                .csrf(csrf -> csrf.disable())
                 .cors(cors -> cors.configurationSource(corsConfigurationSource()))
 
                 // ✅ 아래 두 줄이 추가되었습니다.
@@ -63,7 +64,9 @@ public class SecurityConfig {
                                 "/walk",
                                 "/walk/location/**",
                                 "/walk/users/signup",
-                                "/walk/users/login"
+                                "/walk/users/login",
+                                "/walk/users/stats",
+                                "/walk/my-routes"
                         ).permitAll()
                         .anyRequest().authenticated()
                 )

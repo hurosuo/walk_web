@@ -2,6 +2,7 @@ package com.web.walk_web.user;
 
 import com.web.walk_web.domain.entity.User;
 import com.web.walk_web.domain.dto.UserDto;
+import com.web.walk_web.domain.dto.UserStatsDto;
 import jakarta.servlet.http.HttpSession;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;
@@ -13,6 +14,7 @@ import jakarta.servlet.http.HttpServletRequest;
 @RestController
 @RequiredArgsConstructor
 @RequestMapping("/walk/users")
+
 public class UserController {
 
     private final UserService userService;
@@ -41,6 +43,16 @@ public class UserController {
             return ResponseEntity.status(HttpStatus.UNAUTHORIZED).body(e.getMessage());
         }
     }
+    @GetMapping("/stats")
+    public ResponseEntity<?> getUserStats(HttpSession session) {
+        Long userId = (Long) session.getAttribute("loginUser");
+        if (userId == null) return ResponseEntity.status(HttpStatus.UNAUTHORIZED).body("로그인이 필요합니다.");
+
+        UserStatsDto stats=userService.getUserStats(userId);
+        return ResponseEntity.ok(stats);
+    }
+
+
 }
 
 

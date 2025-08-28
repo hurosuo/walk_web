@@ -1,4 +1,4 @@
-package com.web.walk_web.user.myroute;
+package com.web.walk_web.myroute;
 
 import com.web.walk_web.domain.entity.MyRoute;
 import org.springframework.data.domain.Sort; // Pageable 대신 Sort를 import

@@ -3,8 +3,7 @@ package com.web.walk_web.user;
 import com.web.walk_web.domain.entity.User;
 import com.web.walk_web.domain.dto.UserDto;
 import com.web.walk_web.domain.dto.UserStatsDto;
-import com.web.walk_web.user.myroute.MyRouteRepository;
-import com.web.walk_web.user.UserRepository;
+import com.web.walk_web.myroute.MyRouteRepository;
 import lombok.RequiredArgsConstructor;
 import org.springframework.security.crypto.password.PasswordEncoder; // Security import 추가
 import org.springframework.stereotype.Service;

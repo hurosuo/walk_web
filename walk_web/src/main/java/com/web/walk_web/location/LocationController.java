@@ -1,6 +1,8 @@
 package com.web.walk_web.location;
 
+import com.web.walk_web.domain.dto.InfoDto;
 import com.web.walk_web.domain.dto.LocationDto;
+import com.web.walk_web.domain.entity.AiRouteRecommend;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
@@ -34,5 +36,18 @@ public class LocationController {
 
         if (ddmOnly.isEmpty()) return ResponseEntity.ok(false);
         return ResponseEntity.ok(ddmOnly);
+    }
+
+    @PostMapping("/now")
+    public ResponseEntity<InfoDto> handleLocation(@RequestBody LocationDto locationDto) {
+        // 예: 유저가 선택한 조건 (나중에 파라미터/세션에서 받아올 수도 있음)
+        InfoDto infoDto = InfoDto.fromLocationDto(
+                locationDto,
+                InfoDto.RouteDuration.MIN_30,
+                InfoDto.RoutePurpose.CITY,
+                false
+        );
+
+        return ResponseEntity.ok(infoDto);
     }
 }

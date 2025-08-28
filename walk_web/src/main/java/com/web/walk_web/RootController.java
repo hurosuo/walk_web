@@ -23,8 +23,5 @@ public class RootController {
         return ResponseEntity.ok(dto); // JSON 으로 반환됨
     }
 
-    @GetMapping("/health")
-    public String health() {
-        return "ok";
-    }
+
 }

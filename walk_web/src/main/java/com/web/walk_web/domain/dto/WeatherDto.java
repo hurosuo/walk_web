@@ -4,7 +4,7 @@ import lombok.Getter;
 import lombok.Setter;
 
 @Getter @Setter
-public class WeatherDto {
+public class WeatherDto { // 기상청 api DTO
     private String baseDateTime;       // API 기준/발표 시각 (yyyyMMdd HHmm)
     private String fcstDateTime;       // 예보 시각           (yyyyMMdd HHmm)
 

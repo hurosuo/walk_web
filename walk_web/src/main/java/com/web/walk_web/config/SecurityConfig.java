@@ -30,6 +30,7 @@ public class SecurityConfig {
     public CorsConfigurationSource corsConfigurationSource() {
         CorsConfiguration config = new CorsConfiguration();
         config.setAllowedOrigins(List.of(
+                "http://localhost:8080",
                 "http://52.3.42.186:80",
                 "http://52.3.42.186:8080"
         ));
@@ -56,7 +57,12 @@ public class SecurityConfig {
                         // ✅ CORS preflight 허용
                         .requestMatchers(org.springframework.http.HttpMethod.OPTIONS, "/**").permitAll()
 
-                        .requestMatchers("/walk", "/walk/users/signup", "/walk/users/login").permitAll()
+                        .requestMatchers(
+                                "/walk",
+                                "/walk/location/**",
+                                "/walk/users/signup",
+                                "/walk/users/login"
+                        ).permitAll()
                         .anyRequest().authenticated()
                 )
                 .logout(logout -> logout

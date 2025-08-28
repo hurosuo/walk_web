@@ -1,7 +1,0 @@
-bedrock:
-  region: us-east-1               # 에이전트를 만든 리전
-  agent-id: QZM7LF4IE3         # 콘솔에서 복사
-  agent-alias-id: ZQGHAU2QPV   # 콘솔에서 복사 (예: TSTALIASID)
-
-server:
-  port: 8080

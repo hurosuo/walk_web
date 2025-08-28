@@ -63,8 +63,7 @@ public class SecurityConfig {
                                 "/walk",
                                 "/walk/location/**",
                                 "/walk/users/signup",
-                                "/walk/users/login",
-                                "/walk/reviews"
+                                "/walk/users/login"
                         ).permitAll()
                         .anyRequest().authenticated()
                 )

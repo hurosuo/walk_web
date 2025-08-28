@@ -20,7 +20,7 @@ public class Feedback {
     @Column(name = "feedback_positive")
     private Boolean isPositive;
 
-    @Column(name = "fcedback_noisy")
+    @Column(name = "feedback_noisy")
     private Boolean isNoisy;
 
     @Column(name = "feedback_dirty")

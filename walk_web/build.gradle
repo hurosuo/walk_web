@@ -37,19 +37,10 @@ dependencies {
 	testImplementation 'org.springframework.security:spring-security-test'
 	testRuntimeOnly 'org.junit.platform:junit-platform-launcher'
 	implementation 'org.apache.commons:commons-csv:1.10.0'   // CSV 파서
-	// ★ AWS SDK v2 BOM: 모든 aws-sdk 모듈 버전을 한 번에 고정
-	implementation platform("software.amazon.awssdk:bom:2.29.43")
-
-	// ★ 개별 모듈은 '버전 없이' 선언 (마지막 콜론 붙이면 안 됨!)
-	implementation "software.amazon.awssdk:bedrockagentruntime"
-	implementation "software.amazon.awssdk:auth"
-	implementation "software.amazon.awssdk:regions"
-	implementation "software.amazon.awssdk:netty-nio-client"
-
-	// 필요한 부가 라이브러리
-	implementation "com.fasterxml.jackson.core:jackson-databind:2.17.2"
-	implementation "org.reactivestreams:reactive-streams:1.0.4"
-	testImplementation "org.junit.jupiter:junit-jupiter:5.10.3"
+	implementation platform("software.amazon.awssdk:bom:2.29.0")
+	implementation "software.amazon.awssdk:lambda"
+	implementation "com.fasterxml.jackson.core:jackson-databind"
+	implementation "com.fasterxml.jackson.core:jackson-annotations"
 	// 스트리밍(SSE) 예제를 웹플럭스로 할 거면
 	implementation("org.springframework.boot:spring-boot-starter-webflux")
 }

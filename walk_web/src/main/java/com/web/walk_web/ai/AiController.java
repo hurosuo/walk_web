@@ -1,11 +1,10 @@
 package com.web.walk_web.ai;
 
+import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.web.walk_web.domain.dto.InfoDto;
 import com.web.walk_web.domain.dto.ResponseDto;
 import lombok.RequiredArgsConstructor;
-import org.springframework.beans.factory.annotation.Value;
-import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 import software.amazon.awssdk.auth.credentials.DefaultCredentialsProvider;
@@ -13,101 +12,118 @@ import software.amazon.awssdk.core.SdkBytes;
 import software.amazon.awssdk.regions.Region;
 import software.amazon.awssdk.services.lambda.LambdaClient;
 import software.amazon.awssdk.services.lambda.model.InvokeRequest;
-import software.amazon.awssdk.services.lambda.model.InvokeResponse;
 
 import java.nio.charset.StandardCharsets;
-import java.util.Map;
 
 @RestController
-@RequestMapping("/walk/ai")
 @RequiredArgsConstructor
+@RequestMapping("/walk/ai")
 public class AiController {
 
-    private final ObjectMapper objectMapper = new ObjectMapper();
+    private static final Region REGION = Region.US_EAST_1;
+    private static final String SHIM_LAMBDA_NAME = "action_group_springboot-ix2bg";
 
-    /**
-     * application.yml 예시
-     *
-     * aws:
-     *   region: us-east-1
-     *   lambda:
-     *     shim-name: action_group_springboot-ix2bg
-     */
-    @Value("us-east-1")
-    private String awsRegion;
+    private final ObjectMapper om;
+    private final LambdaClient lambda = LambdaClient.builder()
+            .region(REGION)
+            .credentialsProvider(DefaultCredentialsProvider.create())
+            .build();
 
-    @Value("action_group_springboot-ix2bg")
-    private String shimLambdaName;
+    // ⭐ 1. 직접 만든 AiResponseService를 주입받습니다.
+    private final AiResponseService aiResponseService;
 
-    private LambdaClient lambdaClient;
-
-    // 첫 호출 시 LambdaClient 초기화 (빈 생성 시 region 미주입 문제 회피)
-    private LambdaClient lambda() {
-        if (lambdaClient == null) {
-            lambdaClient = LambdaClient.builder()
-                    .region(Region.of(awsRegion))
-                    .credentialsProvider(DefaultCredentialsProvider.create())
+    @PostMapping("/request")
+    public ResponseEntity<?> request(@RequestBody InfoDto dto) {
+        try {
+            byte[] payload = om.writeValueAsBytes(dto);
+            var req = InvokeRequest.builder()
+                    .functionName(SHIM_LAMBDA_NAME)
+                    .payload(SdkBytes.fromByteArray(payload))
                     .build();
+
+            var resp = lambda.invoke(req);
+            String raw = resp.payload() == null ? "" : resp.payload().asString(StandardCharsets.UTF_8);
+            String functionError = resp.functionError();
+
+            String candidateText = raw;
+            try {
+                JsonNode root = om.readTree(raw);
+                if (root.has("message")) {
+                    candidateText = root.path("message").asText();
+                }
+            } catch (Exception ignore) {
+            }
+
+            String jsonStr = extractOutermostJson(candidateText);
+            if (jsonStr == null) {
+                jsonStr = extractOutermostJson(raw);
+            }
+
+            if (jsonStr != null) {
+                ResponseDto responseDto = om.readValue(jsonStr, ResponseDto.class);
+
+                // ⭐ 2. DTO 파싱 성공 후, 서비스를 호출하여 DB에 저장합니다.
+                try {
+                    aiResponseService.saveAiRoute(responseDto);
+                } catch (Exception e) {
+                    // DB 저장에 실패하더라도 사용자 요청은 성공 처리할 수 있도록 예외처리
+                    System.err.println("AI 경로 추천 결과를 DB에 저장하는 데 실패했습니다: " + e.getMessage());
+                    // 여기서 로그를 남기거나, 에러 모니터링 시스템에 알림을 보낼 수 있습니다.
+                }
+
+                return ResponseEntity.ok(responseDto);
+            }
+
+            String err = (functionError != null) ? functionError : "UnknownError";
+            return ResponseEntity.internalServerError()
+                    .body("{\"ok\":false,\"error\":\"" + err + "\",\"payload\":" + safeEcho(raw) + "}");
+        } catch (Exception e) {
+            return ResponseEntity.internalServerError()
+                    .body("{\"ok\":false,\"error\":\"" + e.getMessage() + "\"}");
         }
-        return lambdaClient;
     }
 
-    /**
-     * InfoDto → (샘 람다 호출) → ResponseDto
-     * 요청: application/json (InfoDto)
-     * 응답: application/json (ResponseDto)
-     */
-    @PostMapping(
-            path = "/request",
-            consumes = MediaType.APPLICATION_JSON_VALUE,
-            produces = MediaType.APPLICATION_JSON_VALUE
-    )
-    public ResponseEntity<?> request(@RequestBody InfoDto infoDto) {
+    // ... extractOutermostJson, safeEcho 메서드는 그대로 ...
+    private String extractOutermostJson(String text) {
+        if (text == null || text.isEmpty()) return null;
+        boolean inString = false, escaped = false;
+        int depth = 0, start = -1;
+        for (int i = 0; i < text.length(); i++) {
+            char ch = text.charAt(i);
+            if (inString) {
+                if (escaped) escaped = false;
+                else if (ch == '\\') escaped = true;
+                else if (ch == '"') inString = false;
+                continue;
+            }
+            if (ch == '"') {
+                inString = true;
+                escaped = false;
+                continue;
+            }
+            if (ch == '{') {
+                if (depth == 0) start = i;
+                depth++;
+            } else if (ch == '}') {
+                if (depth > 0) {
+                    depth--;
+                    if (depth == 0 && start != -1) {
+                        String candidate = text.substring(start, i + 1).trim();
+                        try {
+                            com.fasterxml.jackson.databind.JsonNode node = om.readTree(candidate);
+                            return om.writeValueAsString(node);
+                        } catch (Exception ignore) {}
+                    }
+                }
+            }
+        }
+        return null;
+    }
+    private String safeEcho(String raw) {
         try {
-            // 1) InfoDto를 JSON 문자열로 직렬화하여 람다에 그대로 전달
-            String payloadJson = objectMapper.writeValueAsString(infoDto);
-
-            InvokeRequest invokeReq = InvokeRequest.builder()
-                    .functionName(shimLambdaName)
-                    .payload(SdkBytes.fromString(payloadJson, StandardCharsets.UTF_8))
-                    .build();
-
-            // 2) 샘 람다 호출
-            InvokeResponse invokeRes = lambda().invoke(invokeReq);
-
-            // 3) 람다의 RAW 페이로드(JSON 텍스트) 추출
-            String raw = invokeRes.payload() == null
-                    ? ""
-                    : invokeRes.payload().asString(StandardCharsets.UTF_8);
-
-            // 4) 람다 에러(Handled) 확인: FunctionError가 있으면 500으로 에러 리턴
-            if (invokeRes.functionError() != null && !invokeRes.functionError().isBlank()) {
-                return ResponseEntity.status(500).body(Map.of(
-                        "ok", false,
-                        "error", "Lambda functionError: " + invokeRes.functionError(),
-                        "raw", raw
-                ));
-            }
-
-            if (raw == null || raw.isBlank()) {
-                return ResponseEntity.status(502).body(Map.of(
-                        "ok", false,
-                        "error", "Empty payload from Lambda"
-                ));
-            }
-
-            // 5) 람다 응답(JSON)을 ResponseDto로 역직렬화
-            ResponseDto response = objectMapper.readValue(raw, ResponseDto.class);
-
-            // 6) 그대로 반환 (프론트/클라이언트에서는 ResponseDto JSON을 받게 됨)
-            return ResponseEntity.ok(response);
-
+            return om.writeValueAsString(raw == null ? "" : raw);
         } catch (Exception e) {
-            // 어떤 예외가 나도 JSON으로 에러 반환 (서버는 멈추지 않음)
-            return ResponseEntity.status(500).body(Map.of(
-                    "ok", false,
-                    "error", e.getClass().getSimpleName() + ": " + e.getMessage()
-            ));
+            return "\"\"";
         }
     }
 }

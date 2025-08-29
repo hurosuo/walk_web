@@ -4,8 +4,7 @@ import com.web.walk_web.domain.dto.ReviewDto;
 import com.web.walk_web.domain.entity.Review;
 import com.web.walk_web.domain.entity.Route;
 import com.web.walk_web.domain.entity.User;
-import com.web.walk_web.route.RouteRepository;  // RouteRepository 임포트
-import com.web.walk_web.user.UserRepository;  // 변화: UserRepository 임포트 추가 (user/ 패키지)
+import com.web.walk_web.route.RouteRepository;
 import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
@@ -18,12 +17,10 @@ import org.springframework.transaction.annotation.Transactional;
 public class ReviewService {
     private final ReviewRepository reviewRepository;
     private final RouteRepository routeRepository;
-    private final UserRepository userRepository;  // 변화: UserRepository 주입 추가 (final로 자동 @Autowired)
 
     @Transactional
-    public ReviewDto.Response createReview(ReviewDto.CreateRequest dto, Long userId) {  // 변화: User → Long userId 파라미터
-        User user = userRepository.findById(userId)  // userId로 User 조회
-                .orElseThrow(() -> new IllegalArgumentException("Invalid user"));
+    public ReviewDto.Response createReview(ReviewDto.CreateRequest dto, User user) {
+        // 기존 로직 유지
         Route route = routeRepository.findById(dto.getRouteId())
                 .orElseThrow(() -> new IllegalArgumentException("Invalid route ID"));
         Review review = dto.toEntity(route, route.getAiRouteRecommend(), user);
@@ -33,6 +30,7 @@ public class ReviewService {
 
     @Transactional(readOnly = true)
     public Page<ReviewDto.Response> getReviews(String sort, double lat, double lng, int page, int size) {
+        // 기존 로직 유지
         Pageable pageable = PageRequest.of(page, size);
         Page<Review> reviews;
         if (lat != 0 && lng != 0) {
@@ -45,5 +43,15 @@ public class ReviewService {
             };
         }
         return reviews.map(ReviewDto.Response::new);
+    }
+
+    // 추가: 좋아요 증가 로직 (프론트 버튼 클릭 시 호출)
+    @Transactional
+    public ReviewDto.Response incrementLikeReview(Long reviewId) {
+        Review review = reviewRepository.findById(reviewId)
+                .orElseThrow(() -> new IllegalArgumentException("Invalid review ID"));  // 리뷰 조회
+        review.incrementLike();  // likeCount +1 (엔티티 메서드 호출)
+        Review updated = reviewRepository.save(review);  // DB 업데이트
+        return new ReviewDto.Response(updated);  // 업데이트된 DTO 반환 (likeCount 증가 확인)
     }
 }

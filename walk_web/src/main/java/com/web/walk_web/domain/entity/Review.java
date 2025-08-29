@@ -1,4 +1,4 @@
-package com.web.walk_web.domain.entity;  // 엔티티는 domain.entity 유지 (구조 이미지)
+package com.web.walk_web.domain.entity;  // 엔티티 패키지
 
 import jakarta.persistence.*;
 import lombok.AccessLevel;
@@ -43,7 +43,7 @@ public class Review {
     private AiRouteRecommend aiRouteRecommend;
 
     @ManyToOne(fetch = FetchType.LAZY)
-    @JoinColumn(name = "user_id", nullable = false)  // 변화: User FK 추가
+    @JoinColumn(name = "user_id", nullable = false)
     private User user;
 
     @Builder
@@ -53,5 +53,10 @@ public class Review {
         this.route = route;
         this.aiRouteRecommend = aiRouteRecommend;
         this.user = user;
+    }
+
+    // 추가: like 증가 메서드 (도메인 로직 – 프론트 버튼 클릭 시 호출)
+    public void incrementLike() {
+        this.likeCount++;  // likeCount +1 (DB 업데이트 시 반영)
     }
 }

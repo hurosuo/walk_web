@@ -30,7 +30,7 @@ public class InfoDto {
         CITY,       // 도심
         NIGHT_VIEW, // 야경
         QUIET,      // 조용
-        SCENERY     // 경치
+        RUN     // 경치
     }
 
     // LocationDto → InfoDto 변환 메서드

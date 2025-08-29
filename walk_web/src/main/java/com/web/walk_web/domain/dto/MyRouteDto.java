@@ -4,6 +4,7 @@ package com.web.walk_web.domain.dto;
 import com.web.walk_web.domain.entity.MyRoute;
 import com.web.walk_web.domain.entity.AiRouteRecommend;
 import lombok.Getter;
+import lombok.Setter;
 
 @Getter
 public class MyRouteDto {
@@ -21,5 +22,10 @@ public class MyRouteDto {
         this.rating = myRoute.getRating();
         this.isFavorite = myRoute.getIsFavorite();
         this.distanceInKm=myRoute.getRoute().getAiRouteRecommend().getDistanceInKm();
+    }
+    @Getter
+    @Setter // Spring이 JSON을 객체로 변환할 수 있도록 Setter 추가
+    public static class UpdateFavoriteRequest {
+        private boolean isFavorite;
     }
 }

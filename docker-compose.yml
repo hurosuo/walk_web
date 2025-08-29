@@ -1,0 +1,8 @@
+services:
+  app:
+    build: .               # EC2에서 로컬 Docker 빌드
+    container_name: walk-web
+    env_file: .env         # EC2에만 있는 파일(비밀 포함)
+    ports:
+      - "80:8080"
+    restart: unless-stopped

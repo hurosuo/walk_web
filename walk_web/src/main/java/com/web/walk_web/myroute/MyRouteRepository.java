@@ -1,5 +1,5 @@
 package com.web.walk_web.myroute;
-
+import java.util.Optional;
 import com.web.walk_web.domain.entity.MyRoute;
 import org.springframework.data.domain.Sort; // Pageable 대신 Sort를 import
 import org.springframework.data.jpa.repository.JpaRepository;
@@ -18,7 +18,7 @@ public interface MyRouteRepository extends JpaRepository<MyRoute, Long> {
     // 반환 타입을 Page<MyRoute>에서 List<MyRoute>로 변경
     // 파라미터를 Pageable에서 Sort로 변경
     List<MyRoute> findByUser_Id(Long userId, Sort sort);
-
+    Optional<MyRoute> findByUser_IdAndId(Long userId, Long routeId);
     /**
      * 특정 사용자의 '나의 경로' 목록을 페이징 및 정렬하여 조회합니다.
      */
@@ -55,4 +55,5 @@ public interface MyRouteRepository extends JpaRepository<MyRoute, Long> {
                     "WHERE mr.user_id = :userId",
             nativeQuery = true)
     Long sumTotalDurationInSeconds(@Param("userId") Long userId);
+    List<MyRoute> findByUser_IdAndIsFavorite(Long userId, boolean isFavorite, Sort sort);
 }

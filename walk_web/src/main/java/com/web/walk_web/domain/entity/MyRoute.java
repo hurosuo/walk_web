@@ -48,4 +48,7 @@
             this.rating = rating;
             this.isFavorite = isFavorite;
         }
+        public void updateFavorite(boolean isFavorite) {
+            this.isFavorite = isFavorite;
+        }
     }

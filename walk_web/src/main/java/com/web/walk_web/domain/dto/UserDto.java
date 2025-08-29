@@ -54,13 +54,11 @@ public class UserDto {
     @Getter
     public static class LoginResponse {
         private Long id;
-        private String email;
         private String nickname;
         private String sessionId; // 프론트에서 요청한 세션 ID
 
         public LoginResponse(User user, String sessionId) {
             this.id = user.getId();
-            this.email = user.getNickname(); // User 엔티티에 getEmail()이 있다고 가정
             this.nickname = user.getNickname();
             this.sessionId = sessionId;
         }

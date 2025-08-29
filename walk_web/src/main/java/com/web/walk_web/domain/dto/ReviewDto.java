@@ -39,6 +39,7 @@ public class ReviewDto {
         private final String userNickname;  // User FK 반영
         private final String aiSummary;  // Ai summary 포함 (동의)
         private final String aiTitle;    // Ai title 포함
+        private final Long routeId;
 
         public Response(Review review) {
             this.id = review.getId();
@@ -50,6 +51,7 @@ public class ReviewDto {
             this.userNickname = review.getUser().getNickname();
             this.aiSummary = review.getAiRouteRecommend().getSummary();
             this.aiTitle = review.getAiRouteRecommend().getTitle();
+            this.routeId = review.getRoute().getId();
         }
     }
 }

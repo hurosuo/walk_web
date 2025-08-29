@@ -65,7 +65,7 @@ public class SecurityConfig {
                                 "/walk/users/signup",
                                 "/walk/users/login",
                                 "/walk/ai/request",
-                                "/walk/my-routes/**"
+                                "/walk/my-routes/**",
                                 "/walk/users/login",
                                 "/walk/reviews",
                                 "/walk/reviews/{{reviewId}}/like"

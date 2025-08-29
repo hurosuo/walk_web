@@ -24,7 +24,7 @@ public class AiController {
     // 콘솔에서 만든 “샘 람다” 이름
     private static final String SHIM_LAMBDA_NAME = "action_group_springboot-ix2bg";
 
-    private final ObjectMapper om = new ObjectMapper();
+    private final ObjectMapper om;
     private final LambdaClient lambda = LambdaClient.builder()
             .region(REGION)
             .credentialsProvider(DefaultCredentialsProvider.create())

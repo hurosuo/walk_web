@@ -22,9 +22,9 @@ public class ResponseDto {
 
     private double routeStartX;      // 시작 경도
     private double routeStartY;      // 시작 위도
-    @JsonFormat(shape = JsonFormat.Shape.STRING, pattern = "yyyy-MM-dd HH:mm:ss")
+    @JsonFormat(shape = JsonFormat.Shape.STRING, pattern = "yyyy-MM-dd'T'HH:mm:ss")
     private LocalDateTime routeStartTime; // 시작 시간
-    @JsonFormat(shape = JsonFormat.Shape.STRING, pattern = "yyyy-MM-dd HH:mm:ss")
+    @JsonFormat(shape = JsonFormat.Shape.STRING, pattern = "yyyy-MM-dd'T'HH:mm:ss")
     private LocalDateTime routeEndTime;   // 종료 시간
 
     private List<PointDto> points;   // 경로 포인트 리스트

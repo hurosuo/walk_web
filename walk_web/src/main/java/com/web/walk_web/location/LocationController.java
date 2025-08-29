@@ -4,8 +4,10 @@ import com.web.walk_web.domain.dto.InfoDto;
 import com.web.walk_web.domain.dto.LocationDto;
 import com.web.walk_web.domain.entity.AiRouteRecommend;
 import lombok.RequiredArgsConstructor;
+import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
+import org.springframework.web.server.ResponseStatusException;
 
 import java.util.List;
 
@@ -24,20 +26,6 @@ public class LocationController {
         return dto.isDongdaemun() ? ResponseEntity.ok(dto) : ResponseEntity.ok(false);
     }
 
-    // 주소 검색: 비슷한 주소 3개. 동대문구 아니면 false
-    @GetMapping("/search")
-    public ResponseEntity<?> searchLocation(@RequestParam String query) {
-        List<LocationDto> list = locationService.searchLocation(query);
-
-        // 동대문구만 필터링
-        List<LocationDto> ddmOnly = list.stream()
-                .filter(LocationDto::isDongdaemun)
-                .toList();
-
-        if (ddmOnly.isEmpty()) return ResponseEntity.ok(false);
-        return ResponseEntity.ok(ddmOnly);
-    }
-
     @PostMapping("/now")
     public ResponseEntity<InfoDto> handleLocation(@RequestBody LocationDto locationDto) {
         // 예: 유저가 선택한 조건 (나중에 파라미터/세션에서 받아올 수도 있음)
@@ -49,5 +37,25 @@ public class LocationController {
         );
 
         return ResponseEntity.ok(infoDto);
+    }
+
+    @GetMapping("/search")
+    public LocationDto search(
+            @RequestParam(value = "jibunAddress", required = false) String jibunAddress,
+            @RequestParam(value = "query", required = false) String query
+    ) {
+        String raw = (jibunAddress != null && !jibunAddress.isBlank()) ? jibunAddress : query;
+        if (raw == null || raw.isBlank()) {
+            throw new ResponseStatusException(HttpStatus.BAD_REQUEST, "jibunAddress or query is required");
+        }
+        return locationService.searchByAddress(stripQuotes(raw));
+    }
+
+    private String stripQuotes(String s) {
+        String v = s.strip();
+        if ((v.startsWith("\"") && v.endsWith("\"")) || (v.startsWith("“") && v.endsWith("”"))) {
+            v = v.substring(1, v.length() - 1).strip();
+        }
+        return v;
     }
 }

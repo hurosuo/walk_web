@@ -35,7 +35,7 @@ public class AiController {
         try {
             byte[] payload = om.writeValueAsBytes(dto);
             var req = InvokeRequest.builder()
-                    .functionName("action_group_springboot-ix2bg")
+                    .functionName("action_group_springboot-ix2bg") // 또는 SHIM_LAMBDA_NAME 사용 가능
                     .payload(SdkBytes.fromByteArray(payload))
                     .build();
 
@@ -81,14 +81,37 @@ public class AiController {
         }
     }
 
+    // 텍스트에서 가장 바깥 JSON 객체 하나를 안전하게 추출 (따옴표/이스케이프/중첩 대응)
     private String extractOutermostJson(String text) {
         if (text == null || text.isEmpty()) return null;
+
+        boolean inString = false;   // " 문자열 내부 여부
+        boolean escaped  = false;   // 직전 문자가 \ 였는지
         int depth = 0;
         int start = -1;
-        int bestStart = -1, bestEnd = -1;
 
         for (int i = 0; i < text.length(); i++) {
             char ch = text.charAt(i);
+
+            if (inString) {
+                if (escaped) {
+                    // 직전이 백슬래시였다면 현재 문자는 이스케이프된 문자이므로 그대로 소비
+                    escaped = false;
+                } else if (ch == '\\') {
+                    escaped = true;
+                } else if (ch == '"') {
+                    inString = false;
+                }
+                continue;
+            }
+
+            // 문자열 밖인 경우
+            if (ch == '"') {
+                inString = true;
+                escaped = false;
+                continue;
+            }
+
             if (ch == '{') {
                 if (depth == 0) start = i;
                 depth++;
@@ -96,34 +119,22 @@ public class AiController {
                 if (depth > 0) {
                     depth--;
                     if (depth == 0 && start != -1) {
-                        // 바깥 JSON 하나를 얻음. 가장 긴(바깥) 후보를 채택
-                        if (bestStart == -1 || (i - start) > (bestEnd - bestStart)) {
-                            bestStart = start;
-                            bestEnd = i;
+                        String candidate = text.substring(start, i + 1).trim();
+                        // 유효 JSON인지 검증 후 정규화하여 반환
+                        try {
+                            com.fasterxml.jackson.databind.JsonNode node = om.readTree(candidate);
+                            return om.writeValueAsString(node);
+                        } catch (Exception ignore) {
+                            // 유효하지 않으면 계속 탐색
                         }
                     }
                 }
             }
         }
-        if (bestStart != -1 && bestEnd != -1) {
-            String candidate = text.substring(bestStart, bestEnd + 1).trim();
-
-            // 일부 케이스: 문자열 내부에 이스케이프된 JSON일 수 있음 -> 한 번 역직렬화-재직렬화 시도
-            try {
-                JsonNode test = om.readTree(candidate);
-                return om.writeValueAsString(test); // 정규화
-            } catch (Exception ignore) {
-                // 그대로 반환해도 상위에서 다시 readValue 시도
-            }
-            return candidate;
-        }
         return null;
     }
 
-    /**
-     * 에러 바디에 원문을 JSON 문자열로 안전하게 에코하기 위한 유틸.
-     * (큰따옴표/역슬래시/개행 등 이스케이프)
-     */
+    // 에러 응답용으로 원문을 안전하게 JSON 문자열로 이스케이프
     private String safeEcho(String raw) {
         try {
             return om.writeValueAsString(raw == null ? "" : raw);
@@ -131,3 +142,4 @@ public class AiController {
             return "\"\"";
         }
     }
+}

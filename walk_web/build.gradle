@@ -42,6 +42,7 @@ dependencies {
 	implementation "com.fasterxml.jackson.core:jackson-databind"
 	implementation "com.fasterxml.jackson.core:jackson-annotations"
 	implementation 'com.fasterxml.jackson.core:jackson-core:2.17.2'
+	implementation 'com.fasterxml.jackson.datatype:jackson-datatype-jsr310'
 	// 스트리밍(SSE) 예제를 웹플럭스로 할 거면
 	implementation("org.springframework.boot:spring-boot-starter-webflux")
 }

@@ -37,9 +37,12 @@ dependencies {
 	testImplementation 'org.springframework.security:spring-security-test'
 	testRuntimeOnly 'org.junit.platform:junit-platform-launcher'
 	implementation 'org.apache.commons:commons-csv:1.10.0'   // CSV 파서
-	implementation("software.amazon.awssdk:bedrockagentruntime:2.25.+")
-	// 선택: KB만 직접 쓰려면 아래도
-	implementation("software.amazon.awssdk:bedrockruntime:2.25.+")
+	implementation platform("software.amazon.awssdk:bom:2.29.0")
+	implementation "software.amazon.awssdk:lambda"
+	implementation "com.fasterxml.jackson.core:jackson-databind"
+	implementation "com.fasterxml.jackson.core:jackson-annotations"
+	implementation 'com.fasterxml.jackson.core:jackson-core:2.17.2'
+	implementation 'com.fasterxml.jackson.datatype:jackson-datatype-jsr310'
 	// 스트리밍(SSE) 예제를 웹플럭스로 할 거면
 	implementation("org.springframework.boot:spring-boot-starter-webflux")
 }

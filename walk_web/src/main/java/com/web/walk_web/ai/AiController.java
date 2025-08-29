@@ -1,7 +1,9 @@
 package com.web.walk_web.ai;
 
+import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.web.walk_web.domain.dto.InfoDto;
+import com.web.walk_web.domain.dto.ResponseDto;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
@@ -40,10 +42,29 @@ public class AiController {
             var resp = lambda.invoke(req);
             String body = resp.payload().asString(StandardCharsets.UTF_8);
 
-            // 샘 람다에서 {"ok":true,"message":"..."} 로 내려줌
-            return ResponseEntity.ok(body);
+            // 샘 람다: {"ok":true/false,"message":"...에이전트 텍스트..."}
+            JsonNode root = om.readTree(body);
+            boolean ok = root.path("ok").asBoolean(false);
+            String message = root.path("message").asText("");
+
+            if (!ok) {
+                return ResponseEntity.internalServerError().body(body);
+            }
+
+            // message에서 JSON만 추출 (첫 '{' ~ 마지막 '}')
+            int s = message.indexOf('{');
+            int e = message.lastIndexOf('}');
+            if (s == -1 || e == -1 || s > e) {
+                return ResponseEntity.badRequest().body("{\"ok\":false,\"error\":\"Agent response does not contain JSON\"}");
+            }
+            String jsonOnly = message.substring(s, e + 1);
+
+            ResponseDto responseDto = om.readValue(jsonOnly, ResponseDto.class);
+            return ResponseEntity.ok(responseDto);
+
         } catch (Exception e) {
-            return ResponseEntity.internalServerError().body("{\"ok\":false,\"error\":\"" + e.getMessage() + "\"}");
+            return ResponseEntity.internalServerError()
+                    .body("{\"ok\":false,\"error\":\"" + e.getMessage() + "\"}");
         }
     }
 }

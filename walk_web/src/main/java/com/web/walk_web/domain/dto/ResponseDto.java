@@ -19,6 +19,7 @@ public class ResponseDto {
     private String purpose;          // CITY, NIGHT_VIEW, QUIET, SCENERY
     private String addressJibun;     // 지번 주소
     private boolean withPet;         // 반려동물 동반 여부
+    private Integer cross;           // 횡단보도 개수
 
     private double routeStartX;      // 시작 경도
     private double routeStartY;      // 시작 위도

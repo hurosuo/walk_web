@@ -33,7 +33,7 @@ public class AiController {
         try {
             byte[] payload = om.writeValueAsBytes(dto);
             var req = InvokeRequest.builder()
-                    .functionName(SHIM_LAMBDA_NAME)
+                    .functionName("action_group_springboot-ix2bg")
                     .payload(SdkBytes.fromByteArray(payload))
                     .build();
 

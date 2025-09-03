@@ -18,44 +18,10 @@ public class LocationController {
 
     private final LocationService locationService;
 
-    // 현재 위치: lat, lon은 프론트에서 전달
-    @GetMapping("/now")
-    public ResponseEntity<?> getNowLocation(@RequestParam double lat,
-                                            @RequestParam double lon) {
-        LocationDto dto = locationService.getNowLocation(lat, lon);
-        return dto.isDongdaemun() ? ResponseEntity.ok(dto) : ResponseEntity.ok(false);
-    }
-
-    @PostMapping("/now")
-    public ResponseEntity<InfoDto> handleLocation(@RequestBody LocationDto locationDto) {
-        // 예: 유저가 선택한 조건 (나중에 파라미터/세션에서 받아올 수도 있음)
-        InfoDto infoDto = InfoDto.fromLocationDto(
-                locationDto,
-                InfoDto.RouteDuration.MIN_30,
-                InfoDto.RoutePurpose.CITY,
-                false
-        );
-
-        return ResponseEntity.ok(infoDto);
-    }
-
-    @PostMapping("/search")
-    public LocationDto search(
-            @RequestParam(value = "jibunAddress", required = false) String jibunAddress,
-            @RequestParam(value = "query", required = false) String query
-    ) {
-        String raw = (jibunAddress != null && !jibunAddress.isBlank()) ? jibunAddress : query;
-        if (raw == null || raw.isBlank()) {
-            throw new ResponseStatusException(HttpStatus.BAD_REQUEST, "jibunAddress or query is required");
-        }
-        return locationService.searchByAddress(stripQuotes(raw));
-    }
-
-    private String stripQuotes(String s) {
-        String v = s.strip();
-        if ((v.startsWith("\"") && v.endsWith("\"")) || (v.startsWith("“") && v.endsWith("”"))) {
-            v = v.substring(1, v.length() - 1).strip();
-        }
-        return v;
+    // 지번 주소 -> 위도, 경도로 받아서 json으로 반환하는 형태
+    @GetMapping("/search")
+    public ResponseEntity<LocationDto> search(@RequestParam String jibunAddress) {
+        LocationDto dto = locationService.searchByJibun(jibunAddress);
+        return ResponseEntity.ok(dto);
     }
 }

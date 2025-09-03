@@ -39,7 +39,7 @@ public class LocationController {
         return ResponseEntity.ok(infoDto);
     }
 
-    @GetMapping("/search")
+    @PostMapping("/search")
     public LocationDto search(
             @RequestParam(value = "jibunAddress", required = false) String jibunAddress,
             @RequestParam(value = "query", required = false) String query

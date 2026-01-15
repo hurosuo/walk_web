@@ -1,14 +1,15 @@
-# 📌 워킹시티(Walking City)
+# <img width="68" height="69" alt="image" src="https://github.com/user-attachments/assets/3053d217-48ff-4037-b110-f09f95a05043" /> 워킹시티(Walking City)
 
 > 동대문구 지역 주민들의 취향 맞춤 산책 경로 추천 서비스
 
 ---
 
-## 📖 프로젝트 소개
+## 🚀 해커톤 소개
 - 동대문구 지역사회 문제 해결을 위한 생성형 AI 기반 웹/애플리케이션을 개발하는 해커톤 대회
-  <img width="1920" height="2715" alt="image" src="https://github.com/user-attachments/assets/900a04b8-1c2b-42b3-a1dd-af773aeed57b" />
+  <img width="480" height="640" alt="image" src="https://github.com/user-attachments/assets/900a04b8-1c2b-42b3-a1dd-af773aeed57b" />
 
-- 뭘 만들었을까?
+
+## 📖 프로젝트 소개
 <img width="1122" height="509" alt="image" src="https://github.com/user-attachments/assets/f4fb229a-5a79-4c83-8e5f-18254492b61c" />
 
 

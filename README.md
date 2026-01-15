@@ -34,5 +34,9 @@ project/
 ---
 
 
-## 🏆 주요 성과 / 수상
+## 🏆 수상
 <img width="239" height="320" alt="image" src="https://github.com/user-attachments/assets/11cab84d-b9e9-43ed-b168-fd3c937d6600" />
+
+
+
+---

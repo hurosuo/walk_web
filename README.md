@@ -9,8 +9,8 @@
   <img width="1920" height="2715" alt="image" src="https://github.com/user-attachments/assets/900a04b8-1c2b-42b3-a1dd-af773aeed57b" />
 
 - 뭘 만들었을까?
-<img width="465" height="768" alt="image" src="https://github.com/user-attachments/assets/78fde62d-f514-4cdc-9ffb-c7293b7ced16" />
-<img width="465" height="768" alt="image" src="https://github.com/user-attachments/assets/4a21b1e8-7023-42d3-a523-36e962865a08" />
+<img width="1122" height="509" alt="image" src="https://github.com/user-attachments/assets/f4fb229a-5a79-4c83-8e5f-18254492b61c" />
+
 
 ---
 

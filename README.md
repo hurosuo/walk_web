@@ -1,4 +1,4 @@
-# <img width="40" height="40" alt="image" src="https://github.com/user-attachments/assets/8589caae-3318-47b0-99d5-b1364c65424c" /> WalkingCity
+# <img width="32" height="32" alt="image" src="https://github.com/user-attachments/assets/8589caae-3318-47b0-99d5-b1364c65424c" /> WalkingCity
 
 > **동대문구 지역 주민들의 취향 맞춤 산책 경로 추천 서비스**
 

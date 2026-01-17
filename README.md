@@ -29,7 +29,8 @@
 ---
 
 ## 🏆 수상
-<img width="239" height="320" alt="image" src="https://github.com/user-attachments/assets/11cab84d-b9e9-43ed-b168-fd3c937d6600" />
+<img width="320" height="480" alt="image" src="https://github.com/user-attachments/assets/11cab84d-b9e9-43ed-b168-fd3c937d6600" /><img width="320" height="480" alt="image" src="https://github.com/user-attachments/assets/e9b63a6a-b27b-4639-9cf6-1e4c7ba4ebda" />
+
 
 
 

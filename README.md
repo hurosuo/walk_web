@@ -11,7 +11,15 @@
 
 
 ## 📖 프로젝트 소개
-
+- **✅배경 및 목적**
+  - 👉 
+    
+- **💡아이디어**
+  - 👉 
+    
+- **🔥기대효과**
+  - 👉 
+    
 <img width="1122" height="509" alt="image" src="https://github.com/user-attachments/assets/f4fb229a-5a79-4c83-8e5f-18254492b61c" />
 
 ---
@@ -29,7 +37,7 @@
 ---
 
 ## 🏆 수상
-<img width="320" height="480" alt="image" src="https://github.com/user-attachments/assets/11cab84d-b9e9-43ed-b168-fd3c937d6600" /> <img width="320" height="450" alt="image" src="https://github.com/user-attachments/assets/e9b63a6a-b27b-4639-9cf6-1e4c7ba4ebda" />
+<img width="320" height="480" alt="image" src="https://github.com/user-attachments/assets/11cab84d-b9e9-43ed-b168-fd3c937d6600" /> <img width="300" height="420" alt="image" src="https://github.com/user-attachments/assets/e9b63a6a-b27b-4639-9cf6-1e4c7ba4ebda" />
 
 
 

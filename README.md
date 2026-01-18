@@ -11,6 +11,11 @@
 </div>
 
 ## 📖 프로젝트 소개
+
+<div align="center">
+<img width="1122" height="509" alt="image" src="https://github.com/user-attachments/assets/f4fb229a-5a79-4c83-8e5f-18254492b61c" /> 
+</div>
+
 - **✅배경 및 목적**
   - 👉 동대문구 주민들을 위한 도심 녹지 활용 부족 및 보행 환경 만족도 낮음
   - 👉 사용자들 각각의 니즈를 충족시키며 산책 루트를 추천할 수 없을까?
@@ -28,11 +33,9 @@
 - **🔥기대효과**
   - 👉 산책 경험 개선, 지역 커뮤니티 활성화, 데이터 활용 증진 등의 기대효과!
 <div align="center">
-  <img width="440" height="250" alt="image" src="https://github.com/user-attachments/assets/8621dda2-5fe4-466d-8649-8c407925e444" /> <img width="554" height="313" alt="image" src="https://github.com/user-attachments/assets/70daceb0-a7fe-421d-a9a9-313836f08908" />
+  <img width="440" height="250" alt="image" src="https://github.com/user-attachments/assets/8621dda2-5fe4-466d-8649-8c407925e444" /> <img width="440" height="250" alt="image" src="https://github.com/user-attachments/assets/70daceb0-a7fe-421d-a9a9-313836f08908" />
 </div>
-<div align="center">
-<img width="1122" height="509" alt="image" src="https://github.com/user-attachments/assets/f4fb229a-5a79-4c83-8e5f-18254492b61c" /> 
-</div>
+
 ---
 
 ## 🛠 기술 스택
